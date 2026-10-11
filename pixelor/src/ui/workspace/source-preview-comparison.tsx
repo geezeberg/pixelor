@@ -1,9 +1,11 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useWorkspaceContext } from '../../app/providers/workspace-provider';
 
 export function SourcePreviewComparison() {
   const { state, services } = useWorkspaceContext();
   const previewCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const modalCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const activeDisplayGrid = state.activeProcessedLogicalGrid ?? state.activeLogicalGrid;
 
   useEffect(() => {
@@ -18,6 +20,35 @@ export function SourcePreviewComparison() {
     });
   }, [activeDisplayGrid, services, state.activeRenderPreview]);
 
+  useEffect(() => {
+    if (!isLightboxOpen || !modalCanvasRef.current || !activeDisplayGrid || !state.activeRenderPreview) {
+      return;
+    }
+
+    services.drawRenderPreview({
+      logicalGrid: activeDisplayGrid,
+      renderPreview: state.activeRenderPreview,
+      canvas: modalCanvasRef.current,
+    });
+  }, [activeDisplayGrid, isLightboxOpen, services, state.activeRenderPreview]);
+
+  useEffect(() => {
+    if (!isLightboxOpen) {
+      return;
+    }
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsLightboxOpen(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isLightboxOpen]);
+
   return (
     <section className="panel preview-comparison-panel" style={{ padding: 20, display: 'grid', gap: 16 }}>
       <div>
@@ -27,7 +58,7 @@ export function SourcePreviewComparison() {
         </p>
       </div>
 
-      <div style={{ display: 'grid', gap: 16, gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))' }}>
+      <div className="preview-comparison-grid">
         <figure style={{ margin: 0, display: 'grid', gap: 12 }}>
           <figcaption style={{ fontWeight: 600 }}>Original image</figcaption>
           {state.activeSourceImage ? (
@@ -48,8 +79,13 @@ export function SourcePreviewComparison() {
             Rendered preview{state.paletteWorkspace.activePaletteId ? ' (palette-processed)' : ''}
           </figcaption>
           {state.activeRenderPreview ? (
-            <div style={{ overflow: 'auto', borderRadius: 16, border: '1px solid rgba(29, 36, 48, 0.12)', background: 'white', padding: 12 }}>
-              <canvas ref={previewCanvasRef} aria-label="Rendered logical pixel preview" style={{ width: '100%', height: 'auto', display: 'block' }} />
+            <div style={{ display: 'grid', gap: 10 }}>
+              <div style={{ overflow: 'auto', borderRadius: 16, border: '1px solid rgba(29, 36, 48, 0.12)', background: 'white', padding: 12 }}>
+                <canvas ref={previewCanvasRef} aria-label="Rendered logical pixel preview" style={{ width: '100%', height: 'auto', display: 'block' }} />
+              </div>
+              <button type="button" onClick={() => setIsLightboxOpen(true)}>
+                Open large preview
+              </button>
             </div>
           ) : (
             <div style={{ minHeight: 280, display: 'grid', placeItems: 'center', background: 'rgba(29, 36, 48, 0.05)', borderRadius: 16 }}>
@@ -58,6 +94,26 @@ export function SourcePreviewComparison() {
           )}
         </figure>
       </div>
+
+      {isLightboxOpen ? (
+        <div className="preview-lightbox-backdrop" onClick={() => setIsLightboxOpen(false)}>
+          <div className="preview-lightbox-content" onClick={(event) => event.stopPropagation()}>
+            <button
+              type="button"
+              className="preview-lightbox-close"
+              aria-label="Close large preview"
+              onClick={() => setIsLightboxOpen(false)}
+            >
+              X
+            </button>
+            <canvas
+              ref={modalCanvasRef}
+              aria-label="Large rendered logical pixel preview"
+              className="preview-lightbox-canvas"
+            />
+          </div>
+        </div>
+      ) : null}
     </section>
   );
 }
