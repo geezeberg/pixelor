@@ -28,7 +28,7 @@ function createServices() {
 
 describe('palette preview/export parity', () => {
   it('exports using the currently visible palette-processed preview settings', async () => {
-    const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {});
+    const objectUrlSpy = vi.spyOn(URL, 'createObjectURL');
 
     const { container } = render(
       <WorkspaceProvider services={createServices()}>
@@ -42,12 +42,14 @@ describe('palette preview/export parity', () => {
     await waitFor(() => expect(screen.getByText(/loaded parity\.png/i)).toBeInTheDocument());
 
     fireEvent.click(screen.getByRole('button', { name: /generate palette/i }));
+    await waitFor(() => expect(screen.getByText(/rendered preview \(palette-processed\)/i)).toBeInTheDocument());
 
     fireEvent.click(screen.getByRole('button', { name: /export png/i }));
 
-    await waitFor(() => expect(clickSpy).toHaveBeenCalled());
+    await waitFor(() => expect(objectUrlSpy).toHaveBeenCalled());
     expect(screen.getByText(/rendered preview \(palette-processed\)/i)).toBeInTheDocument();
+    expect(screen.queryByText(/could not be exported/i)).not.toBeInTheDocument();
 
-    clickSpy.mockRestore();
+    objectUrlSpy.mockRestore();
   });
 });

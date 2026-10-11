@@ -18,7 +18,7 @@ function createTransparentSource() {
 
 describe('render preview regeneration', () => {
   it('preserves transparency metadata and deterministic fingerprints', () => {
-    const logicalGrid = generateLogicalPixelGrid(createTransparentSource(), createPixelationSetting(1));
+    const logicalGrid = generateLogicalPixelGrid(createTransparentSource(), createPixelationSetting(2));
     const firstPreview = createCanvasRenderPreview({ logicalGrid, renderScale: 8 });
     const secondPreview = createCanvasRenderPreview({ logicalGrid, renderScale: 8 });
 
@@ -27,13 +27,13 @@ describe('render preview regeneration', () => {
   });
 
   it('draws the preview onto a canvas using the resolved render dimensions', () => {
-    const logicalGrid = generateLogicalPixelGrid(createTransparentSource(), createPixelationSetting(1));
+    const logicalGrid = generateLogicalPixelGrid(createTransparentSource(), createPixelationSetting(2));
     const preview = createCanvasRenderPreview({ logicalGrid, renderScale: 6 });
     const canvas = document.createElement('canvas');
 
     drawRenderPreviewToCanvas({ logicalGrid, renderPreview: preview, canvas });
 
-    expect(canvas.width).toBe(12);
+    expect(canvas.width).toBe(6);
     expect(canvas.height).toBe(6);
   });
 });

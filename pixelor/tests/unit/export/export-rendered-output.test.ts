@@ -28,7 +28,7 @@ function createSource() {
 
 describe('exportRenderedPng', () => {
   it('exports a PNG blob matching the preview fingerprint', async () => {
-    const logicalGrid = generateLogicalPixelGrid(createSource(), createPixelationSetting(1));
+    const logicalGrid = generateLogicalPixelGrid(createSource(), createPixelationSetting(2));
     const renderPreview = createCanvasRenderPreview({ logicalGrid, renderScale: 4 });
     const exportedOutput = await exportRenderedPng({ logicalGrid, renderPreview });
 

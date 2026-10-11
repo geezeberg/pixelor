@@ -44,7 +44,7 @@ describe('palette retention across pixelation changes', () => {
 
     await waitFor(() => {
       expect(screen.getByText(/rendered preview \(palette-processed\)/i)).toBeInTheDocument();
-      expect(screen.getByDisplayValue('24')).toBeInTheDocument();
+      expect(screen.getByLabelText(/current value/i)).toHaveValue(24);
     });
   });
 });

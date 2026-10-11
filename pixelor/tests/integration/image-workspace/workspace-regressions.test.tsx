@@ -28,7 +28,7 @@ function createServices() {
 
 describe('workspace regressions', () => {
   it('keeps the source image stable while exporting the current rendered preview', async () => {
-    const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {});
+    const objectUrlSpy = vi.spyOn(URL, 'createObjectURL');
 
     const { container } = render(
       <WorkspaceProvider services={createServices()}>
@@ -43,12 +43,14 @@ describe('workspace regressions', () => {
 
     fireEvent.change(screen.getByLabelText(/cell size/i), { target: { value: '20' } });
     fireEvent.click(screen.getByRole('button', { name: /generate palette/i }));
+    await waitFor(() => expect(screen.getByText(/rendered preview \(palette-processed\)/i)).toBeInTheDocument());
     fireEvent.click(screen.getByRole('button', { name: /export png/i }));
 
-    await waitFor(() => expect(clickSpy).toHaveBeenCalled());
+    await waitFor(() => expect(objectUrlSpy).toHaveBeenCalled());
     expect(screen.getByAltText(/imported source preview/i)).toHaveAttribute('src', expect.stringContaining('data:image/png'));
-    expect(screen.getByDisplayValue('20')).toBeInTheDocument();
+    expect(screen.getByLabelText(/current value/i)).toHaveValue(20);
+    expect(screen.queryByText(/could not be exported/i)).not.toBeInTheDocument();
 
-    clickSpy.mockRestore();
+    objectUrlSpy.mockRestore();
   });
 });

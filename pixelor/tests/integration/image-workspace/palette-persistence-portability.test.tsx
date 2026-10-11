@@ -28,7 +28,7 @@ function createServices() {
 
 describe('palette persistence and portability flow', () => {
   it('saves custom palette and exports active palette artifact', async () => {
-    const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {});
+    const objectUrlSpy = vi.spyOn(URL, 'createObjectURL');
 
     const { container } = render(
       <WorkspaceProvider services={createServices()}>
@@ -46,10 +46,9 @@ describe('palette persistence and portability flow', () => {
     fireEvent.click(screen.getByRole('button', { name: /save active custom palette/i }));
     fireEvent.click(screen.getByRole('button', { name: /export active palette/i }));
 
-    await waitFor(() => {
-      expect(clickSpy).toHaveBeenCalled();
-    });
+    await waitFor(() => expect(objectUrlSpy).toHaveBeenCalled());
+    expect(screen.queryByText(/could not be exported/i)).not.toBeInTheDocument();
 
-    clickSpy.mockRestore();
+    objectUrlSpy.mockRestore();
   });
 });

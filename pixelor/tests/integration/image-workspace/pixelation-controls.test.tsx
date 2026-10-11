@@ -42,7 +42,7 @@ describe('pixelation controls', () => {
     const range = screen.getByLabelText(/cell size/i);
     fireEvent.change(range, { target: { value: '16' } });
 
-    await waitFor(() => expect(screen.getByDisplayValue('16')).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByLabelText(/current value/i)).toHaveValue(16));
     expect(screen.getByAltText(/imported source preview/i)).toBeInTheDocument();
   });
 });

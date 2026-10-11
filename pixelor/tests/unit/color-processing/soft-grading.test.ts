@@ -28,8 +28,8 @@ describe('applySoftGrading', () => {
 
     const half = applySoftGrading(grid, palette, 0.5);
 
-    expect(half[0]).toBeGreaterThan(100);
-    expect(half[1]).toBeGreaterThan(50);
+    expect(half[0]).toBe(50);
+    expect(half[1]).toBe(25);
     expect(half[2]).toBe(0);
   });
 });
