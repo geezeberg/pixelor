@@ -1,0 +1,99 @@
+:root {
+  color-scheme: light;
+  font-family: 'IBM Plex Sans', 'Segoe UI', sans-serif;
+  background:
+    radial-gradient(circle at top left, rgba(255, 209, 102, 0.35), transparent 32%),
+    linear-gradient(160deg, #f4efe6 0%, #efe6d8 45%, #dfe4ec 100%);
+  color: #1d2430;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+canvas {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.app-shell {
+  min-height: 100vh;
+  padding: 24px;
+}
+
+.workspace-shell {
+  display: grid;
+  gap: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.panel {
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(29, 36, 48, 0.12);
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(38, 47, 61, 0.09);
+  backdrop-filter: blur(14px);
+}
+
+.workspace-header {
+  display: grid;
+  gap: 8px;
+  padding: 28px;
+}
+
+.workspace-header h1 {
+  margin: 0;
+  font-size: clamp(2rem, 5vw, 3.75rem);
+  line-height: 0.95;
+  letter-spacing: -0.05em;
+}
+
+.workspace-header p {
+  margin: 0;
+  max-width: 56rem;
+  line-height: 1.5;
+  color: #4e5765;
+}
+
+.workspace-content {
+  display: grid;
+  gap: 20px;
+}
+
+.workspace-status {
+  padding: 14px 18px;
+  border-radius: 14px;
+  background: rgba(29, 36, 48, 0.06);
+  color: #334054;
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+}
+
+@media (min-width: 900px) {
+  .workspace-content {
+    grid-template-columns: minmax(280px, 340px) minmax(0, 1fr);
+    align-items: start;
+  }
+}
