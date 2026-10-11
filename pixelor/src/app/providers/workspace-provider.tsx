@@ -22,7 +22,6 @@ import { replaceImageAction } from '../../features/image-workspace/actions/repla
 import { WorkspaceError } from '../../shared/types/errors';
 import { generatePaletteAction } from '../../features/image-workspace/actions/generate-palette';
 import { selectPaletteAction } from '../../features/image-workspace/actions/select-palette';
-import { createInitialPaletteWorkspaceState } from '../../features/image-workspace/state/palette-workspace-state';
 import {
   addActivePaletteColorAction,
   duplicatePaletteAction,
@@ -136,15 +135,26 @@ export function WorkspaceProvider({ children, services }: WorkspaceProviderProps
         services: resolvedServices,
       });
 
-      setState((previous) => ({
-        ...previous,
+      const baseState: WorkspaceState = {
+        ...stateRef.current,
         activeSourceImage: result.sourceImage,
         activeLogicalGrid: result.logicalGrid,
         activeProcessedLogicalGrid: null,
         activeRenderPreview: result.renderPreview,
         lastExportedOutput: null,
         lastError: null,
-        paletteWorkspace: createInitialPaletteWorkspaceState(),
+      };
+      const resolvedState = reapplySelectedPaletteAction(baseState, resolvedServices);
+
+      setState((previous) => ({
+        ...previous,
+        activeSourceImage: resolvedState.activeSourceImage,
+        activeLogicalGrid: resolvedState.activeLogicalGrid,
+        activeProcessedLogicalGrid: resolvedState.activeProcessedLogicalGrid,
+        activeRenderPreview: resolvedState.activeRenderPreview,
+        lastExportedOutput: resolvedState.lastExportedOutput,
+        lastError: null,
+        paletteWorkspace: resolvedState.paletteWorkspace,
         phase: 'ready',
       }));
     } catch (error) {
@@ -167,15 +177,26 @@ export function WorkspaceProvider({ children, services }: WorkspaceProviderProps
         services: resolvedServices,
       });
 
-      setState((previous) => ({
-        ...previous,
+      const baseState: WorkspaceState = {
+        ...stateRef.current,
         activeSourceImage: result.sourceImage,
         activeLogicalGrid: result.logicalGrid,
         activeProcessedLogicalGrid: null,
         activeRenderPreview: result.renderPreview,
         lastExportedOutput: null,
         lastError: null,
-        paletteWorkspace: createInitialPaletteWorkspaceState(),
+      };
+      const resolvedState = reapplySelectedPaletteAction(baseState, resolvedServices);
+
+      setState((previous) => ({
+        ...previous,
+        activeSourceImage: resolvedState.activeSourceImage,
+        activeLogicalGrid: resolvedState.activeLogicalGrid,
+        activeProcessedLogicalGrid: resolvedState.activeProcessedLogicalGrid,
+        activeRenderPreview: resolvedState.activeRenderPreview,
+        lastExportedOutput: resolvedState.lastExportedOutput,
+        lastError: null,
+        paletteWorkspace: resolvedState.paletteWorkspace,
         phase: 'ready',
       }));
     } catch (error) {
@@ -236,15 +257,19 @@ export function WorkspaceProvider({ children, services }: WorkspaceProviderProps
 
   function generatePalette(targetSize: number) {
     try {
-      const nextState = generatePaletteAction({
+      const generatedState = generatePaletteAction({
         state: stateRef.current,
         targetSize,
       });
+      const resolvedState = reapplySelectedPaletteAction(generatedState, resolvedServices);
 
       setState((previous) => ({
         ...previous,
-        paletteWorkspace: nextState.paletteWorkspace,
+        activeProcessedLogicalGrid: resolvedState.activeProcessedLogicalGrid,
+        activeRenderPreview: resolvedState.activeRenderPreview,
+        paletteWorkspace: resolvedState.paletteWorkspace,
         lastError: null,
+        phase: 'ready',
       }));
     } catch (error) {
       const workspaceError = error instanceof WorkspaceError ? error : new WorkspaceError('palette-generation-failed', 'Unable to generate palette.');

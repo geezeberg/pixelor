@@ -26,8 +26,21 @@ function nearestPaletteColor(red: number, green: number, blue: number, palette: 
   return nearest;
 }
 
-export function applyOrderedDithering(pixels: Uint8ClampedArray, width: number, height: number, palette: Palette): Uint8ClampedArray {
+export interface OrderedDitheringOptions {
+  quantizeToPalette?: boolean;
+  strength?: number;
+}
+
+export function applyOrderedDithering(
+  pixels: Uint8ClampedArray,
+  width: number,
+  height: number,
+  palette: Palette,
+  options?: OrderedDitheringOptions,
+): Uint8ClampedArray {
   const dithered = new Uint8ClampedArray(pixels.length);
+  const quantizeToPalette = options?.quantizeToPalette ?? true;
+  const strength = Math.max(0, Math.min(1, options?.strength ?? 1));
 
   for (let y = 0; y < height; y += 1) {
     for (let x = 0; x < width; x += 1) {
@@ -42,15 +55,21 @@ export function applyOrderedDithering(pixels: Uint8ClampedArray, width: number, 
         continue;
       }
 
-      const threshold = (BAYER_4X4[y % 4][x % 4] / 15 - 0.5) * 24;
+      const threshold = (BAYER_4X4[y % 4][x % 4] / 15 - 0.5) * (24 * strength);
       const adjustedRed = Math.max(0, Math.min(255, Math.round(pixels[offset] + threshold)));
       const adjustedGreen = Math.max(0, Math.min(255, Math.round(pixels[offset + 1] + threshold)));
       const adjustedBlue = Math.max(0, Math.min(255, Math.round(pixels[offset + 2] + threshold)));
 
-      const nearest = nearestPaletteColor(adjustedRed, adjustedGreen, adjustedBlue, palette);
-      dithered[offset] = nearest.rgba.red;
-      dithered[offset + 1] = nearest.rgba.green;
-      dithered[offset + 2] = nearest.rgba.blue;
+      if (quantizeToPalette) {
+        const nearest = nearestPaletteColor(adjustedRed, adjustedGreen, adjustedBlue, palette);
+        dithered[offset] = nearest.rgba.red;
+        dithered[offset + 1] = nearest.rgba.green;
+        dithered[offset + 2] = nearest.rgba.blue;
+      } else {
+        dithered[offset] = adjustedRed;
+        dithered[offset + 1] = adjustedGreen;
+        dithered[offset + 2] = adjustedBlue;
+      }
       dithered[offset + 3] = alpha;
     }
   }

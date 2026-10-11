@@ -10,7 +10,8 @@ export function resolveColorProcessing(
   palette: Palette,
   settings: ColorProcessingSettings,
 ): Uint8ClampedArray {
-  const modeResolved = settings.mode === 'soft'
+  const isSoftMode = settings.mode === 'soft';
+  const modeResolved = isSoftMode
     ? applySoftGrading(logicalGrid, palette, settings.softStrength)
     : applyStrictPalette(logicalGrid, palette);
 
@@ -18,5 +19,8 @@ export function resolveColorProcessing(
     return modeResolved;
   }
 
-  return applyOrderedDithering(modeResolved, logicalGrid.gridWidth, logicalGrid.gridHeight, palette);
+  return applyOrderedDithering(modeResolved, logicalGrid.gridWidth, logicalGrid.gridHeight, palette, {
+    quantizeToPalette: !isSoftMode,
+    strength: isSoftMode ? settings.softStrength : 1,
+  });
 }

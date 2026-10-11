@@ -22,7 +22,6 @@ export function selectPaletteAction({ state, services, paletteId }: SelectPalett
 
   const nextSettings = {
     ...state.paletteWorkspace.processing,
-    mode: 'strict' as const,
     selectedPaletteId: paletteId,
   };
 

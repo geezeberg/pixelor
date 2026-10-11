@@ -34,7 +34,6 @@ export function generatePaletteAction({ state, targetSize = DEFAULT_GENERATED_PA
       processing: {
         ...state.paletteWorkspace.processing,
         selectedPaletteId: generatedPalette.paletteId,
-        mode: 'strict',
       },
       processedGrid: null,
     },

@@ -27,7 +27,7 @@ function createServices() {
 }
 
 describe('replace image workflow', () => {
-  it('replaces the active source image and refreshes the workspace', async () => {
+  it('replaces the active source image and keeps custom palettes available', async () => {
     const { container } = render(
       <WorkspaceProvider services={createServices()}>
         <WorkspaceShell />
@@ -39,8 +39,15 @@ describe('replace image workflow', () => {
 
     await waitFor(() => expect(screen.getByText(/loaded first\.png/i)).toBeInTheDocument());
 
+    fireEvent.click(screen.getAllByRole('button', { name: /duplicate/i })[0]);
+    fireEvent.change(screen.getByLabelText(/palette name/i), { target: { value: 'Carry Me' } });
+    expect(screen.getByDisplayValue('Carry Me')).toBeInTheDocument();
+
     fireEvent.change(fileInputs[1], { target: { files: [new File(['x'], 'second.png', { type: 'image/png' })] } });
 
-    await waitFor(() => expect(screen.getByText(/loaded second\.png/i)).toBeInTheDocument());
+    await waitFor(() => {
+      expect(screen.getByText(/loaded second\.png/i)).toBeInTheDocument();
+      expect(screen.getByDisplayValue('Carry Me')).toBeInTheDocument();
+    });
   });
 });

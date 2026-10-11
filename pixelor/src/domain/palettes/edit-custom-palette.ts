@@ -4,8 +4,8 @@ import { createPalette, type Palette } from './palette';
 import { createPaletteColorEntry } from './palette-color-entry';
 
 function assertEditable(palette: Palette) {
-  if (!palette.isEditable || palette.sourceType !== 'custom') {
-    throw new WorkspaceError('invalid-palette-file', 'Only custom palettes can be edited.', {
+  if (!palette.isEditable) {
+    throw new WorkspaceError('invalid-palette-file', 'This palette cannot be edited.', {
       paletteId: palette.paletteId,
     });
   }
@@ -15,7 +15,7 @@ function rebuildPalette(palette: Palette, colors: string[], name = palette.name)
   return createPalette({
     ...palette,
     name,
-    sourceType: 'custom',
+    sourceType: palette.sourceType,
     isEditable: true,
     colors: colors.map((hex, index) =>
       createPaletteColorEntry({

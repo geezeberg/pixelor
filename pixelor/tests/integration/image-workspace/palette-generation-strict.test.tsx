@@ -61,11 +61,14 @@ describe('palette generation strict flow', () => {
     await waitFor(() => expect(screen.getByText(/loaded palette\.png/i)).toBeInTheDocument());
 
     fireEvent.click(screen.getByRole('button', { name: /generate palette/i }));
-    fireEvent.click(screen.getByRole('button', { name: /apply strict mode/i }));
 
     await waitFor(() => {
       expect(screen.getByText(/rendered preview \(palette-processed\)/i)).toBeInTheDocument();
     });
+
+    const paletteName = screen.getByLabelText(/palette name/i);
+    fireEvent.change(paletteName, { target: { value: 'Auto Edited' } });
+    expect(screen.getByDisplayValue('Auto Edited')).toBeInTheDocument();
 
     expect(screen.getByAltText(/imported source preview/i)).toBeInTheDocument();
   });

@@ -27,4 +27,19 @@ describe('applyOrderedDithering', () => {
     expect(Array.from(first)).toEqual(Array.from(second));
     expect(first.length).toBe(pixels.length);
   });
+
+  it('can preserve soft tonal variation when palette quantization is disabled', () => {
+    const pixels = new Uint8ClampedArray(4 * 4 * 4).fill(120);
+    for (let index = 3; index < pixels.length; index += 4) {
+      pixels[index] = 255;
+    }
+
+    const dithered = applyOrderedDithering(pixels, 4, 4, palette, {
+      quantizeToPalette: false,
+      strength: 0.5,
+    });
+
+    const channels = Array.from(dithered).filter((_, index) => index % 4 !== 3);
+    expect(channels.some((value) => value > 0 && value < 255)).toBe(true);
+  });
 });

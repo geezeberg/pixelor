@@ -27,7 +27,7 @@ function createServices() {
 }
 
 describe('mode switch and dithering flow', () => {
-  it('switches mode and toggles dithering without breaking preview', async () => {
+  it('keeps soft mode settings while reapplying the selected palette', async () => {
     const { container } = render(
       <WorkspaceProvider services={createServices()}>
         <WorkspaceShell />
@@ -39,10 +39,10 @@ describe('mode switch and dithering flow', () => {
     await waitFor(() => expect(screen.getByText(/loaded mode-dither\.png/i)).toBeInTheDocument());
 
     fireEvent.click(screen.getByRole('button', { name: /generate palette/i }));
-    fireEvent.click(screen.getByRole('button', { name: /apply strict mode/i }));
 
     fireEvent.change(screen.getByLabelText(/mode/i), { target: { value: 'soft' } });
     fireEvent.click(screen.getByLabelText(/enable ordered dithering/i));
+    fireEvent.click(screen.getByRole('button', { name: /apply strict mode/i }));
 
     expect(screen.getByLabelText(/mode/i)).toHaveValue('soft');
     expect(screen.getByLabelText(/enable ordered dithering/i)).toBeChecked();
