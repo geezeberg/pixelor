@@ -4,18 +4,19 @@ import { useWorkspaceContext } from '../../app/providers/workspace-provider';
 export function SourcePreviewComparison() {
   const { state, services } = useWorkspaceContext();
   const previewCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const activeDisplayGrid = state.activeProcessedLogicalGrid ?? state.activeLogicalGrid;
 
   useEffect(() => {
-    if (!previewCanvasRef.current || !state.activeLogicalGrid || !state.activeRenderPreview) {
+    if (!previewCanvasRef.current || !activeDisplayGrid || !state.activeRenderPreview) {
       return;
     }
 
     services.drawRenderPreview({
-      logicalGrid: state.activeLogicalGrid,
+      logicalGrid: activeDisplayGrid,
       renderPreview: state.activeRenderPreview,
       canvas: previewCanvasRef.current,
     });
-  }, [services, state.activeLogicalGrid, state.activeRenderPreview]);
+  }, [activeDisplayGrid, services, state.activeRenderPreview]);
 
   return (
     <section className="panel" style={{ padding: 20, display: 'grid', gap: 16 }}>
@@ -43,7 +44,9 @@ export function SourcePreviewComparison() {
         </figure>
 
         <figure style={{ margin: 0, display: 'grid', gap: 12 }}>
-          <figcaption style={{ fontWeight: 600 }}>Rendered preview</figcaption>
+          <figcaption style={{ fontWeight: 600 }}>
+            Rendered preview{state.paletteWorkspace.activePaletteId ? ' (palette-processed)' : ''}
+          </figcaption>
           {state.activeRenderPreview ? (
             <div style={{ overflow: 'auto', borderRadius: 16, border: '1px solid rgba(29, 36, 48, 0.12)', background: 'white', padding: 12 }}>
               <canvas ref={previewCanvasRef} aria-label="Rendered logical pixel preview" style={{ width: '100%', height: 'auto', display: 'block' }} />

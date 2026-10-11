@@ -8,6 +8,9 @@ const ERROR_MESSAGES: Record<WorkspaceErrorCode, string> = {
   'missing-preview': 'Load an image before exporting a preview.',
   'render-failed': 'The preview could not be rendered.',
   'export-failed': 'The rendered preview could not be exported.',
+  'palette-generation-failed': 'A reduced palette could not be generated for this image.',
+  'invalid-palette-file': 'The palette file is invalid or unsupported.',
+  'palette-persistence-failed': 'Custom palettes could not be saved locally.',
   unknown: 'Something went wrong while processing the image.',
 };
 

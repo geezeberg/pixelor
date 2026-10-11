@@ -42,10 +42,13 @@ describe('workspace regressions', () => {
     await waitFor(() => expect(screen.getByText(/loaded stable\.png/i)).toBeInTheDocument());
 
     fireEvent.change(screen.getByLabelText(/cell size/i), { target: { value: '20' } });
+    fireEvent.click(screen.getByRole('button', { name: /generate palette/i }));
+    fireEvent.click(screen.getByRole('button', { name: /apply strict mode/i }));
     fireEvent.click(screen.getByRole('button', { name: /export png/i }));
 
     await waitFor(() => expect(clickSpy).toHaveBeenCalled());
     expect(screen.getByAltText(/imported source preview/i)).toHaveAttribute('src', expect.stringContaining('data:image/png'));
+    expect(screen.getByDisplayValue('20')).toBeInTheDocument();
 
     clickSpy.mockRestore();
   });

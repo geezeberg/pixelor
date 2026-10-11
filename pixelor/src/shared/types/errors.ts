@@ -6,6 +6,9 @@ export type WorkspaceErrorCode =
   | 'missing-preview'
   | 'render-failed'
   | 'export-failed'
+  | 'palette-generation-failed'
+  | 'invalid-palette-file'
+  | 'palette-persistence-failed'
   | 'unknown';
 
 export class WorkspaceError extends Error {

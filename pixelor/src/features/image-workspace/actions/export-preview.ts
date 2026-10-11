@@ -8,12 +8,14 @@ export interface ExportPreviewActionInput {
 }
 
 export async function exportPreviewAction({ state, services }: ExportPreviewActionInput) {
-  if (!state.activeLogicalGrid || !state.activeRenderPreview) {
+  const activeDisplayGrid = state.activeProcessedLogicalGrid ?? state.activeLogicalGrid;
+
+  if (!activeDisplayGrid || !state.activeRenderPreview) {
     throw new WorkspaceError('missing-preview', 'Load and render an image before exporting.');
   }
 
   const exportedOutput = await services.exportRenderedPreview({
-    logicalGrid: state.activeLogicalGrid,
+    logicalGrid: activeDisplayGrid,
     renderPreview: state.activeRenderPreview,
   });
 

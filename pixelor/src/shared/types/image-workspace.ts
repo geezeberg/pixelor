@@ -4,6 +4,7 @@ import type { PixelationSetting } from '../../domain/logical-grid/pixelation-set
 import type { RenderPreview } from '../../domain/rendering/render-preview';
 import type { SourceImage } from '../../domain/source-image/source-image';
 import type { WorkspaceError } from './errors';
+import type { PaletteWorkspaceState } from './palette-workspace';
 
 export type WorkspacePhase = 'idle' | 'loading' | 'ready' | 'updating' | 'error' | 'exporting';
 
@@ -11,9 +12,11 @@ export interface WorkspaceState {
   activeSourceImage: SourceImage | null;
   activePixelationSetting: PixelationSetting;
   activeLogicalGrid: LogicalPixelGrid | null;
+  activeProcessedLogicalGrid: LogicalPixelGrid | null;
   activeRenderPreview: RenderPreview | null;
   lastExportedOutput: ExportedOutput | null;
   lastError: WorkspaceError | null;
+  paletteWorkspace: PaletteWorkspaceState;
   phase: WorkspacePhase;
 }
 
