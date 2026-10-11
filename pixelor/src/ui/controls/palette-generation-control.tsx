@@ -13,7 +13,7 @@ export function PaletteGenerationControl() {
     <section className="panel" style={{ padding: 20, display: 'grid', gap: 12 }}>
       <div>
         <h2 style={{ marginTop: 0 }}>Palette generation</h2>
-        <p style={{ marginBottom: 0, color: '#4e5765' }}>
+        <p style={{ marginBottom: 0, color: 'var(--color-muted)' }}>
           Generate a reduced palette from the current logical grid and apply strict color mapping.
         </p>
       </div>

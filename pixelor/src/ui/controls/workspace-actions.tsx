@@ -9,7 +9,7 @@ export function WorkspaceActions() {
     <section className="panel" style={{ padding: 20, display: 'grid', gap: 12 }}>
       <div>
         <h2 style={{ marginTop: 0 }}>Workspace actions</h2>
-        <p style={{ marginBottom: 0, color: '#4e5765' }}>
+        <p style={{ marginBottom: 0, color: 'var(--color-muted)' }}>
           Export the rendered output or replace the active source while keeping the session responsive.
         </p>
       </div>

@@ -8,7 +8,7 @@ export function PixelationControl() {
     <section className="panel" style={{ padding: 20, display: 'grid', gap: 12 }}>
       <div>
         <h2 style={{ marginTop: 0 }}>Logical pixelation</h2>
-        <p style={{ marginBottom: 0, color: '#4e5765' }}>
+        <p style={{ marginBottom: 0, color: 'var(--color-muted)' }}>
           Adjust the logical grid density without mutating the imported source image.
         </p>
       </div>

@@ -22,7 +22,7 @@ export function SourcePreviewComparison() {
     <section className="panel preview-comparison-panel" style={{ padding: 20, display: 'grid', gap: 16 }}>
       <div>
         <h2 style={{ marginTop: 0 }}>Source and rendered preview</h2>
-        <p style={{ marginBottom: 0, color: '#4e5765' }}>
+        <p style={{ marginBottom: 0, color: 'var(--color-muted)' }}>
           The left view stays faithful to the imported source. The right view renders the logical grid.
         </p>
       </div>

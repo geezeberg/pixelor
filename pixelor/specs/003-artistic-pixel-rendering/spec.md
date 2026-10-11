@@ -80,6 +80,8 @@ As a user, I can manage all appearance controls from one coherent panel while ke
 - Glow disabled state avoids unnecessary expensive effect computation.
 - Changes between strict and soft color processing preserve current appearance settings.
 - Non-matching source and logical-grid aspect ratios still produce predictable composition.
+- Extreme spacing values maintain deterministic placement and preserve visibility rules even when many shapes fall partially or fully outside the output canvas.
+- Edge softness and glow near canvas boundaries clip predictably to canvas bounds without shifting logical pixel alignment.
 
 ## Requirements *(mandatory)*
 
@@ -95,6 +97,8 @@ As a user, I can manage all appearance controls from one coherent panel while ke
 - **FR-007a**: The default pixel spacing value MUST be 0 (no extra spacing between pixel centers).
 - **FR-008**: Pixel size changes MUST modify visible shape dimensions without altering logical grid dimensions.
 - **FR-009**: Spacing changes MUST modify distance between pixel centers independently from shape size.
+- **FR-009a**: With fixed output dimensions, pixel size and center-to-center spacing MUST be resolved through predictable global scaling and centering that preserves the complete logical pixel arrangement inside the output canvas.
+- **FR-009b**: Adjusting pixel size or spacing MUST NOT change logical-grid resolution, logical pixel ordering, or logical pixel center topology.
 - **FR-010**: The system MUST provide transparent and solid background modes.
 - **FR-011**: Transparent background mode MUST preserve transparency outside rendered shapes in preview and exported PNG.
 - **FR-012**: Solid background mode MUST fill output canvas behind rendered shapes with user-selected color and accept only hex values in `#RRGGBB` format.
@@ -108,7 +112,6 @@ As a user, I can manage all appearance controls from one coherent panel while ke
 - **FR-020**: Pixel-opacity control MUST NOT alter solid background opacity.
 - **FR-021**: The system MUST decouple output dimensions from source resolution and logical-grid resolution.
 - **FR-022**: Default output width and height MUST match imported source image dimensions.
-- **FR-023**: The system MUST allow custom output width and height values from 32 px to 4096 px and enforce validation errors for values outside that range.
 - **FR-023**: The system MUST allow custom output width and height values from 32 px to 4096 px and enforce validation errors for values outside that range.
 - **FR-023a**: When output dimensions are invalid, the system MUST keep displaying the last valid preview state, show a validation error, and block export until values are valid.
 - **FR-024**: Aspect-ratio locking MUST be enabled by default and update paired dimension proportionally when active, rounding the paired value to the nearest integer.

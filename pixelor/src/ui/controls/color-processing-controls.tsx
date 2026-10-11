@@ -9,7 +9,7 @@ export function ColorProcessingControls() {
     <section className="panel" style={{ padding: 20, display: 'grid', gap: 12 }}>
       <div>
         <h2 style={{ marginTop: 0 }}>Color processing</h2>
-        <p style={{ marginBottom: 0, color: '#4e5765' }}>Switch strict/soft mapping and toggle deterministic ordered dithering.</p>
+        <p style={{ marginBottom: 0, color: 'var(--color-muted)' }}>Switch strict/soft mapping and toggle deterministic ordered dithering.</p>
       </div>
 
       <label htmlFor="processing-mode">Mode</label>

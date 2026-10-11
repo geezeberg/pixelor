@@ -17,7 +17,7 @@ export function ImportPanel() {
     <section className="panel" style={{ padding: 20, display: 'grid', gap: 16 }}>
       <div>
         <h2 style={{ marginTop: 0 }}>Import artwork</h2>
-        <p style={{ marginBottom: 0, color: '#4e5765' }}>
+        <p style={{ marginBottom: 0, color: 'var(--color-muted)' }}>
           PNG and JPEG only. Files stay local and the original stays recoverable.
         </p>
       </div>
@@ -65,7 +65,7 @@ export function ImportPanel() {
       >
         <div>
           <strong>{state.phase === 'loading' ? 'Importing image…' : 'Drop an image here'}</strong>
-          <p style={{ marginBottom: 0, color: '#4e5765' }}>Offline import via drag-and-drop or file picker.</p>
+          <p style={{ marginBottom: 0, color: 'var(--color-muted)' }}>Offline import via drag-and-drop or file picker.</p>
         </div>
       </div>
     </section>

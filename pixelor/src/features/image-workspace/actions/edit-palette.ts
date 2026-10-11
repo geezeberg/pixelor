@@ -26,13 +26,26 @@ function upsertPalette(state: WorkspaceState, paletteId: string, nextPalette: Wo
   };
 }
 
+function createUniqueCustomPaletteId(state: WorkspaceState, sourcePaletteId: string) {
+  const base = `custom-${sourcePaletteId.replace(/[^a-z0-9-]/gi, '-').toLowerCase()}-${Date.now()}`;
+  let candidate = base;
+  let index = 1;
+
+  while (state.paletteWorkspace.palettesById[candidate]) {
+    candidate = `${base}-${index}`;
+    index += 1;
+  }
+
+  return candidate;
+}
+
 export function duplicatePaletteAction(state: WorkspaceState, paletteId: string): WorkspaceState {
   const source = state.paletteWorkspace.palettesById[paletteId];
   if (!source) {
     throw new WorkspaceError('invalid-palette-file', 'Palette to duplicate was not found.', { paletteId });
   }
 
-  const nextId = `custom-${Date.now()}`;
+  const nextId = createUniqueCustomPaletteId(state, source.paletteId);
   const duplicated = duplicatePaletteAsCustom(source, nextId);
 
   return {

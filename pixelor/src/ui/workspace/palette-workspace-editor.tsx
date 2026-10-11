@@ -20,6 +20,7 @@ export function PaletteWorkspaceEditor() {
     state,
     generatePalette,
     selectPalette,
+    disablePaletteProcessing,
     duplicatePalette,
     renameActivePalette,
     updateActivePaletteColor,
@@ -35,6 +36,8 @@ export function PaletteWorkspaceEditor() {
 
   const [targetSize, setTargetSize] = useState(16);
   const [selectedColorIndex, setSelectedColorIndex] = useState(0);
+  const [selectedHexDraft, setSelectedHexDraft] = useState('');
+  const [selectedHexError, setSelectedHexError] = useState<string | null>(null);
 
   const hasImage = Boolean(state.activeSourceImage);
   const activePaletteId = state.paletteWorkspace.activePaletteId;
@@ -62,11 +65,36 @@ export function PaletteWorkspaceEditor() {
 
   const selectedEntry = activePalette ? activePalette.colors[selectedColorIndex] : null;
 
+  useEffect(() => {
+    setSelectedHexDraft(selectedEntry?.hex ?? '');
+    setSelectedHexError(null);
+  }, [activePaletteId, selectedColorIndex, selectedEntry?.hex]);
+
+  function commitSelectedHexDraft() {
+    if (!activePalette?.isEditable || !selectedEntry) {
+      return;
+    }
+
+    const trimmed = selectedHexDraft.trim();
+    if (!/^#[0-9a-fA-F]{6}$/.test(trimmed)) {
+      setSelectedHexError('Enter a valid hex color in #RRGGBB format.');
+      return;
+    }
+
+    const normalized = trimmed.toUpperCase();
+    setSelectedHexDraft(normalized);
+    setSelectedHexError(null);
+
+    if (normalized !== selectedEntry.hex.toUpperCase()) {
+      updateActivePaletteColor(selectedColorIndex, normalized);
+    }
+  }
+
   return (
     <section className="panel palette-workspace-panel" style={{ padding: 20, display: 'grid', gap: 16 }}>
       <div>
         <h2 style={{ marginTop: 0 }}>Palette workspace</h2>
-        <p style={{ marginBottom: 0, color: '#4e5765' }}>
+        <p style={{ marginBottom: 0, color: 'var(--color-muted)' }}>
           Generate, select, edit, process, and manage palettes from one place.
         </p>
       </div>
@@ -109,14 +137,14 @@ export function PaletteWorkspaceEditor() {
           disabled={!hasImage || paletteList.length === 0}
           onChange={(event) => {
             const nextId = event.currentTarget.value;
-            if (nextId) {
+            if (!nextId) {
+              disablePaletteProcessing();
+            } else {
               selectPalette(nextId);
             }
           }}
         >
-          <option value="" disabled>
-            Select a palette
-          </option>
+          <option value="">Original colors / No palette</option>
           {paletteList.map((palette) => (
             <option key={palette.paletteId} value={palette.paletteId}>
               {sourceLabel(palette.sourceType)}: {palette.name} ({palette.colors.length})
@@ -147,7 +175,7 @@ export function PaletteWorkspaceEditor() {
             ))}
           </div>
         ) : (
-          <p style={{ margin: 0, color: '#4e5765' }}>No saved custom palettes yet.</p>
+          <p style={{ margin: 0, color: 'var(--color-muted)' }}>No saved custom palettes yet.</p>
         )}
       </div>
 
@@ -156,7 +184,7 @@ export function PaletteWorkspaceEditor() {
           <div style={{ display: 'grid', gap: 6 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
               <strong style={{ fontSize: '1.05rem' }}>{activePalette.name}</strong>
-              <span style={{ color: '#4e5765' }}>
+              <span style={{ color: 'var(--color-muted)' }}>
                 {sourceLabel(activePalette.sourceType)} · {activePalette.colors.length} colors
               </span>
             </div>
@@ -194,14 +222,28 @@ export function PaletteWorkspaceEditor() {
                   type="color"
                   disabled={!activePalette.isEditable}
                   value={selectedEntry.hex}
-                  onChange={(event) => updateActivePaletteColor(selectedColorIndex, event.currentTarget.value)}
+                  onChange={(event) => {
+                    const normalized = event.currentTarget.value.toUpperCase();
+                    setSelectedHexDraft(normalized);
+                    setSelectedHexError(null);
+                    updateActivePaletteColor(selectedColorIndex, normalized);
+                  }}
                 />
                 <input
                   aria-label="selected-swatch-hex"
                   type="text"
                   disabled={!activePalette.isEditable}
-                  value={selectedEntry.hex}
-                  onChange={(event) => updateActivePaletteColor(selectedColorIndex, event.currentTarget.value)}
+                  value={selectedHexDraft}
+                  onChange={(event) => {
+                    setSelectedHexDraft(event.currentTarget.value);
+                    setSelectedHexError(null);
+                  }}
+                  onBlur={commitSelectedHexDraft}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter') {
+                      commitSelectedHexDraft();
+                    }
+                  }}
                 />
                 <button
                   type="button"
@@ -219,11 +261,14 @@ export function PaletteWorkspaceEditor() {
                   </button>
                 ) : null}
               </div>
+              {selectedHexError ? (
+                <p style={{ margin: 0, color: 'var(--color-error-text)' }}>{selectedHexError}</p>
+              ) : null}
             </div>
           ) : null}
         </>
       ) : (
-        <p style={{ margin: 0, color: '#4e5765' }}>Generate or select a palette to start editing.</p>
+        <p style={{ margin: 0, color: 'var(--color-muted)' }}>Generate or select a palette to start editing.</p>
       )}
 
       <div style={{ display: 'grid', gap: 8 }}>

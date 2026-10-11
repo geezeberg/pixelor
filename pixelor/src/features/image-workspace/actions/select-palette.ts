@@ -9,6 +9,11 @@ export interface SelectPaletteActionInput {
   paletteId: string;
 }
 
+export interface ClearPaletteSelectionActionInput {
+  state: WorkspaceState;
+  services: ImageWorkspaceServices;
+}
+
 export function selectPaletteAction({ state, services, paletteId }: SelectPaletteActionInput): WorkspaceState {
   if (!state.activeLogicalGrid) {
     throw new WorkspaceError('render-failed', 'Load an image before selecting a palette.');
@@ -40,6 +45,32 @@ export function selectPaletteAction({ state, services, paletteId }: SelectPalett
       activePaletteId: paletteId,
       processing: nextSettings,
       processedGrid: result.processedGrid,
+    },
+  };
+}
+
+export function clearPaletteSelectionAction({ state, services }: ClearPaletteSelectionActionInput): WorkspaceState {
+  if (!state.activeLogicalGrid) {
+    throw new WorkspaceError('render-failed', 'Load an image before disabling palette processing.');
+  }
+
+  const renderPreview = services.createRenderPreview({
+    logicalGrid: state.activeLogicalGrid,
+    renderScale: state.activeRenderPreview?.renderScale,
+  });
+
+  return {
+    ...state,
+    activeProcessedLogicalGrid: null,
+    activeRenderPreview: renderPreview,
+    paletteWorkspace: {
+      ...state.paletteWorkspace,
+      activePaletteId: null,
+      processing: {
+        ...state.paletteWorkspace.processing,
+        selectedPaletteId: null,
+      },
+      processedGrid: null,
     },
   };
 }

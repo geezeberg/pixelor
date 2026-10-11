@@ -10,7 +10,7 @@ export function PredefinedPaletteBrowser() {
     <section className="panel" style={{ padding: 20, display: 'grid', gap: 12 }}>
       <div>
         <h2 style={{ marginTop: 0 }}>Predefined palettes</h2>
-        <p style={{ marginBottom: 0, color: '#4e5765' }}>Browse curated palettes and duplicate any into an editable custom palette.</p>
+        <p style={{ marginBottom: 0, color: 'var(--color-muted)' }}>Browse curated palettes and duplicate any into an editable custom palette.</p>
       </div>
 
       <div style={{ display: 'grid', gap: 10 }}>

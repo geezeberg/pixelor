@@ -1,6 +1,8 @@
 :root {
   color-scheme: dark;
   font-family: 'IBM Plex Sans', 'Segoe UI', sans-serif;
+  --color-muted: #b8c7de;
+  --color-error-text: #ff8f8f;
   background:
     radial-gradient(circle at top left, rgba(95, 162, 255, 0.16), transparent 34%),
     radial-gradient(circle at bottom right, rgba(255, 117, 158, 0.14), transparent 30%),
@@ -84,7 +86,7 @@ canvas {
   margin: 0;
   max-width: 56rem;
   line-height: 1.5;
-  color: #afbdd0;
+  color: var(--color-muted);
 }
 
 .workspace-content {

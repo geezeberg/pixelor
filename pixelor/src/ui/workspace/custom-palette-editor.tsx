@@ -18,7 +18,7 @@ export function CustomPaletteEditor() {
     return (
       <section className="panel" style={{ padding: 20 }}>
         <h2 style={{ marginTop: 0 }}>Custom palette editor</h2>
-        <p style={{ marginBottom: 0, color: '#4e5765' }}>Duplicate a predefined palette or generate one first to begin editing.</p>
+        <p style={{ marginBottom: 0, color: 'var(--color-muted)' }}>Duplicate a predefined palette or generate one first to begin editing.</p>
       </section>
     );
   }
@@ -27,7 +27,7 @@ export function CustomPaletteEditor() {
     <section className="panel" style={{ padding: 20, display: 'grid', gap: 12 }}>
       <div>
         <h2 style={{ marginTop: 0 }}>Custom palette editor</h2>
-        <p style={{ marginBottom: 0, color: '#4e5765' }}>Rename, edit, add, and remove colors for the selected editable palette.</p>
+        <p style={{ marginBottom: 0, color: 'var(--color-muted)' }}>Rename, edit, add, and remove colors for the selected editable palette.</p>
       </div>
 
       <label htmlFor="palette-name">Palette name</label>

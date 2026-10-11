@@ -2,6 +2,7 @@ import {
   createContext,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState,
   type PropsWithChildren,
@@ -21,7 +22,7 @@ import { exportPreviewAction } from '../../features/image-workspace/actions/expo
 import { replaceImageAction } from '../../features/image-workspace/actions/replace-image';
 import { WorkspaceError } from '../../shared/types/errors';
 import { generatePaletteAction } from '../../features/image-workspace/actions/generate-palette';
-import { selectPaletteAction } from '../../features/image-workspace/actions/select-palette';
+import { clearPaletteSelectionAction, selectPaletteAction } from '../../features/image-workspace/actions/select-palette';
 import {
   addActivePaletteColorAction,
   duplicatePaletteAction,
@@ -57,6 +58,7 @@ export interface WorkspaceContextValue {
   updatePixelation: (value: number) => void;
   generatePalette: (targetSize: number) => void;
   selectPalette: (paletteId: string) => void;
+  disablePaletteProcessing: () => void;
   duplicatePalette: (paletteId: string) => void;
   renameActivePalette: (name: string) => void;
   updateActivePaletteColor: (index: number, hex: string) => void;
@@ -82,10 +84,13 @@ export function WorkspaceProvider({ children, services }: WorkspaceProviderProps
   const [state, setState] = useState<WorkspaceState>(() => createInitialWorkspaceState());
   const [isOffline, setIsOffline] = useState<boolean>(() => !navigator.onLine);
   const stateRef = useRef(state);
-  const resolvedServices: ImageWorkspaceServices = {
-    ...defaultServices,
-    ...services,
-  };
+  const resolvedServices = useMemo<ImageWorkspaceServices>(
+    () => ({
+      ...defaultServices,
+      ...services,
+    }),
+    [services],
+  );
 
   useEffect(() => {
     stateRef.current = state;
@@ -300,6 +305,27 @@ export function WorkspaceProvider({ children, services }: WorkspaceProviderProps
     }
   }
 
+  function disablePaletteProcessing() {
+    try {
+      const nextState = clearPaletteSelectionAction({
+        state: stateRef.current,
+        services: resolvedServices,
+      });
+
+      setState((previous) => ({
+        ...previous,
+        activeProcessedLogicalGrid: nextState.activeProcessedLogicalGrid,
+        activeRenderPreview: nextState.activeRenderPreview,
+        paletteWorkspace: nextState.paletteWorkspace,
+        lastError: null,
+        phase: 'ready',
+      }));
+    } catch (error) {
+      const workspaceError = error instanceof WorkspaceError ? error : new WorkspaceError('render-failed', 'Unable to disable palette processing.');
+      setState((previous) => ({ ...previous, lastError: workspaceError, phase: 'error' }));
+    }
+  }
+
   function duplicatePalette(paletteId: string) {
     try {
       const duplicatedState = duplicatePaletteAction(stateRef.current, paletteId);
@@ -435,12 +461,6 @@ export function WorkspaceProvider({ children, services }: WorkspaceProviderProps
         throw new WorkspaceError('palette-persistence-failed', 'Active palette could not be found.');
       }
 
-      if (activePalette.sourceType === 'custom') {
-        await saveActivePaletteAction(stateRef.current);
-        setState((previous) => ({ ...previous, lastError: null }));
-        return;
-      }
-
       const duplicatedState = duplicatePaletteAction(stateRef.current, activePaletteId);
       const resolvedState = reapplySelectedPaletteAction(duplicatedState, resolvedServices);
 
@@ -554,6 +574,7 @@ export function WorkspaceProvider({ children, services }: WorkspaceProviderProps
         updatePixelation,
         generatePalette,
         selectPalette,
+        disablePaletteProcessing,
         duplicatePalette,
         renameActivePalette,
         updateActivePaletteColor,
