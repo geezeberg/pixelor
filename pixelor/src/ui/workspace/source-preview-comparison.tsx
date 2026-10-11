@@ -19,7 +19,7 @@ export function SourcePreviewComparison() {
   }, [activeDisplayGrid, services, state.activeRenderPreview]);
 
   return (
-    <section className="panel" style={{ padding: 20, display: 'grid', gap: 16 }}>
+    <section className="panel preview-comparison-panel" style={{ padding: 20, display: 'grid', gap: 16 }}>
       <div>
         <h2 style={{ marginTop: 0 }}>Source and rendered preview</h2>
         <p style={{ marginBottom: 0, color: '#4e5765' }}>

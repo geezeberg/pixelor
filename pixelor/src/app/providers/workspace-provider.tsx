@@ -64,6 +64,7 @@ export interface WorkspaceContextValue {
   removeActivePaletteColor: (index: number) => void;
   updateColorProcessing: (input: { mode?: 'strict' | 'soft'; softStrength?: number; ditheringEnabled?: boolean }) => void;
   saveActivePalette: () => Promise<void>;
+  saveActivePaletteAsCustom: () => Promise<void>;
   deleteActivePalette: () => Promise<void>;
   exportActivePalette: () => void;
   importPaletteFile: (file: File) => Promise<void>;
@@ -422,6 +423,43 @@ export function WorkspaceProvider({ children, services }: WorkspaceProviderProps
     }
   }
 
+  async function saveActivePaletteAsCustom() {
+    try {
+      const activePaletteId = stateRef.current.paletteWorkspace.activePaletteId;
+      if (!activePaletteId) {
+        throw new WorkspaceError('palette-persistence-failed', 'No active palette selected to save.');
+      }
+
+      const activePalette = stateRef.current.paletteWorkspace.palettesById[activePaletteId];
+      if (!activePalette) {
+        throw new WorkspaceError('palette-persistence-failed', 'Active palette could not be found.');
+      }
+
+      if (activePalette.sourceType === 'custom') {
+        await saveActivePaletteAction(stateRef.current);
+        setState((previous) => ({ ...previous, lastError: null }));
+        return;
+      }
+
+      const duplicatedState = duplicatePaletteAction(stateRef.current, activePaletteId);
+      const resolvedState = reapplySelectedPaletteAction(duplicatedState, resolvedServices);
+
+      await saveActivePaletteAction(resolvedState);
+
+      setState((previous) => ({
+        ...previous,
+        activeProcessedLogicalGrid: resolvedState.activeProcessedLogicalGrid,
+        activeRenderPreview: resolvedState.activeRenderPreview,
+        paletteWorkspace: resolvedState.paletteWorkspace,
+        lastError: null,
+        phase: 'ready',
+      }));
+    } catch (error) {
+      const workspaceError = error instanceof WorkspaceError ? error : new WorkspaceError('palette-persistence-failed', 'Unable to save palette as custom.');
+      setState((previous) => ({ ...previous, lastError: workspaceError, phase: 'error' }));
+    }
+  }
+
   async function deleteActivePalette() {
     try {
       const nextState = await deleteActivePaletteAction(stateRef.current);
@@ -523,6 +561,7 @@ export function WorkspaceProvider({ children, services }: WorkspaceProviderProps
         removeActivePaletteColor,
         updateColorProcessing,
         saveActivePalette,
+        saveActivePaletteAsCustom,
         deleteActivePalette,
         exportActivePalette,
         importPaletteFile,

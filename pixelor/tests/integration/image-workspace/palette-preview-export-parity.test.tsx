@@ -42,7 +42,6 @@ describe('palette preview/export parity', () => {
     await waitFor(() => expect(screen.getByText(/loaded parity\.png/i)).toBeInTheDocument());
 
     fireEvent.click(screen.getByRole('button', { name: /generate palette/i }));
-    fireEvent.click(screen.getByRole('button', { name: /apply strict mode/i }));
 
     fireEvent.click(screen.getByRole('button', { name: /export png/i }));
 

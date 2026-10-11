@@ -42,7 +42,16 @@ describe('mode switch and dithering flow', () => {
 
     fireEvent.change(screen.getByLabelText(/mode/i), { target: { value: 'soft' } });
     fireEvent.click(screen.getByLabelText(/enable ordered dithering/i));
-    fireEvent.click(screen.getByRole('button', { name: /apply strict mode/i }));
+
+    const paletteSelect = screen.getByLabelText(/active palette/i) as HTMLSelectElement;
+    const currentPaletteId = paletteSelect.value;
+    const alternate = Array.from(paletteSelect.options)
+      .find((option) => option.value && option.value !== currentPaletteId);
+
+    if (alternate) {
+      fireEvent.change(paletteSelect, { target: { value: alternate.value } });
+      fireEvent.change(paletteSelect, { target: { value: currentPaletteId } });
+    }
 
     expect(screen.getByLabelText(/mode/i)).toHaveValue('soft');
     expect(screen.getByLabelText(/enable ordered dithering/i)).toBeChecked();

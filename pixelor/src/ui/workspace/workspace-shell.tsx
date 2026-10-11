@@ -1,14 +1,10 @@
 import { WorkspaceStatus } from '../feedback/workspace-status';
 import { ImportErrorBanner } from '../feedback/import-error-banner';
 import { PixelationControl } from '../controls/pixelation-control';
-import { PaletteGenerationControl } from '../controls/palette-generation-control';
 import { WorkspaceActions } from '../controls/workspace-actions';
-import { ColorProcessingControls } from '../controls/color-processing-controls';
 import { ImportPanel } from './import-panel';
 import { SourcePreviewComparison } from './source-preview-comparison';
-import { PredefinedPaletteBrowser } from './predefined-palette-browser';
-import { CustomPaletteEditor } from './custom-palette-editor';
-import { PaletteLibraryPanel } from './palette-library-panel';
+import { PaletteWorkspaceEditor } from './palette-workspace-editor';
 
 export function WorkspaceShell() {
   return (
@@ -30,11 +26,7 @@ export function WorkspaceShell() {
           <div style={{ display: 'grid', gap: 20 }}>
             <ImportPanel />
             <PixelationControl />
-            <PaletteGenerationControl />
-            <PredefinedPaletteBrowser />
-            <CustomPaletteEditor />
-            <ColorProcessingControls />
-            <PaletteLibraryPanel />
+            <PaletteWorkspaceEditor />
             <WorkspaceActions />
           </div>
           <SourcePreviewComparison />

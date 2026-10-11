@@ -39,7 +39,14 @@ describe('predefined to custom palette flow', () => {
 
     await waitFor(() => expect(screen.getByText(/loaded custom-edit\.png/i)).toBeInTheDocument());
 
-    fireEvent.click(screen.getAllByRole('button', { name: /duplicate/i })[0]);
+    const paletteSelect = screen.getByLabelText(/active palette/i) as HTMLSelectElement;
+    const presetOption = Array.from(paletteSelect.options).find((option) => option.text.startsWith('Preset:'));
+
+    if (presetOption) {
+      fireEvent.change(paletteSelect, { target: { value: presetOption.value } });
+    }
+
+    fireEvent.click(screen.getByRole('button', { name: /duplicate as custom/i }));
 
     const nameInput = screen.getByLabelText(/palette name/i);
     fireEvent.change(nameInput, { target: { value: 'Edited Palette' } });

@@ -41,7 +41,8 @@ describe('palette persistence and portability flow', () => {
 
     await waitFor(() => expect(screen.getByText(/loaded persist\.png/i)).toBeInTheDocument());
 
-    fireEvent.click(screen.getAllByRole('button', { name: /duplicate/i })[0]);
+    fireEvent.click(screen.getByRole('button', { name: /generate palette/i }));
+    fireEvent.click(screen.getByRole('button', { name: /save as new custom palette/i }));
     fireEvent.click(screen.getByRole('button', { name: /save active custom palette/i }));
     fireEvent.click(screen.getByRole('button', { name: /export active palette/i }));
 

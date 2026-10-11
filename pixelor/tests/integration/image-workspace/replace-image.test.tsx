@@ -39,15 +39,16 @@ describe('replace image workflow', () => {
 
     await waitFor(() => expect(screen.getByText(/loaded first\.png/i)).toBeInTheDocument());
 
-    fireEvent.click(screen.getAllByRole('button', { name: /duplicate/i })[0]);
+    fireEvent.click(screen.getByRole('button', { name: /generate palette/i }));
     fireEvent.change(screen.getByLabelText(/palette name/i), { target: { value: 'Carry Me' } });
-    expect(screen.getByDisplayValue('Carry Me')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /save as new custom palette/i }));
+    expect(screen.getByRole('button', { name: /carry me copy/i })).toBeInTheDocument();
 
     fireEvent.change(fileInputs[1], { target: { files: [new File(['x'], 'second.png', { type: 'image/png' })] } });
 
     await waitFor(() => {
       expect(screen.getByText(/loaded second\.png/i)).toBeInTheDocument();
-      expect(screen.getByDisplayValue('Carry Me')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /carry me copy/i })).toBeInTheDocument();
     });
   });
 });

@@ -41,7 +41,6 @@ describe('palette performance budgets', () => {
     await waitFor(() => expect(screen.getByText(/loaded perf\.png/i)).toBeInTheDocument());
 
     fireEvent.click(screen.getByRole('button', { name: /generate palette/i }));
-    fireEvent.click(screen.getByRole('button', { name: /apply strict mode/i }));
     fireEvent.change(screen.getByLabelText(/mode/i), { target: { value: 'soft' } });
 
     const snapshot = readPerformanceSnapshot();

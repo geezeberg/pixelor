@@ -40,7 +40,6 @@ describe('palette retention across pixelation changes', () => {
     await waitFor(() => expect(screen.getByText(/loaded retain\.png/i)).toBeInTheDocument());
 
     fireEvent.click(screen.getByRole('button', { name: /generate palette/i }));
-    fireEvent.click(screen.getByRole('button', { name: /apply strict mode/i }));
     fireEvent.change(screen.getByLabelText(/cell size/i), { target: { value: '24' } });
 
     await waitFor(() => {

@@ -43,7 +43,6 @@ describe('workspace regressions', () => {
 
     fireEvent.change(screen.getByLabelText(/cell size/i), { target: { value: '20' } });
     fireEvent.click(screen.getByRole('button', { name: /generate palette/i }));
-    fireEvent.click(screen.getByRole('button', { name: /apply strict mode/i }));
     fireEvent.click(screen.getByRole('button', { name: /export png/i }));
 
     await waitFor(() => expect(clickSpy).toHaveBeenCalled());
